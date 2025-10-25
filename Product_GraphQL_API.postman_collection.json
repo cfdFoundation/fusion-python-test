@@ -1,0 +1,370 @@
+{
+  "info": {
+    "_postman_id": "product-graphql-api",
+    "name": "Product GraphQL API",
+    "description": "Flask GraphQL API with async fire-and-forget architecture for write operations",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Queries",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query {\n  allProducts {\n    id\n    title\n    price\n    description\n    category\n    image\n    rating\n  }\n}",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["graphql"]
+            },
+            "description": "Fetch all products with complete information"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Products with Pagination",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query GetProductsPaginated($first: Int, $skip: Int) {\n  allProducts(first: $first, skip: $skip) {\n    id\n    title\n    price\n    category\n  }\n}",
+                "variables": "{\n  \"first\": 5,\n  \"skip\": 0\n}"
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["graphql"]
+            },
+            "description": "Get products with pagination - limit and offset"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Products",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query SearchProducts($search: String) {\n  allProducts(search: $search) {\n    id\n    title\n    price\n    description\n    category\n  }\n}",
+                "variables": "{\n  \"search\": \"Gaming\"\n}"
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["graphql"]
+            },
+            "description": "Search products by title or description"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query GetProductById($productId: Int!) {\n  product(productId: $productId) {\n    id\n    title\n    price\n    description\n    category\n    image\n    rating\n  }\n}",
+                "variables": "{\n  \"productId\": 1\n}"
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["graphql"]
+            },
+            "description": "Get a specific product by its ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mutations - Async",
+      "item": [
+        {
+          "name": "Create Product - Async (Fire & Forget)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation CreateProductAsync($title: String!, $price: Float!, $description: String, $category: String, $image: String, $ratingRate: Float, $ratingCount: Int) {\n  createProduct(\n    title: $title\n    price: $price\n    description: $description\n    category: $category\n    image: $image\n    ratingRate: $ratingRate\n    ratingCount: $ratingCount\n  ) {\n    success\n    message\n  }\n}",
+                "variables": "{\n  \"title\": \"MacBook Pro M3\",\n  \"price\": 2399.99,\n  \"description\": \"14-inch Liquid Retina XDR display, M3 Pro chip with 12-core CPU and 18-core GPU, 18GB unified memory, 1TB SSD storage\",\n  \"category\": \"Laptops\",\n  \"image\": \"https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp14-m3-max-pro-spaceblack-select-202310\",\n  \"ratingRate\": 4.8,\n  \"ratingCount\": 342\n}"
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["graphql"]
+            },
+            "description": "Create product asynchronously - returns immediately without waiting for DB write"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product - Async (Fire & Forget)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation UpdateProductAsync($productId: Int!, $title: String, $price: Float, $description: String, $category: String, $image: String, $ratingRate: Float, $ratingCount: Int) {\n  updateProduct(\n    productId: $productId\n    title: $title\n    price: $price\n    description: $description\n    category: $category\n    image: $image\n    ratingRate: $ratingRate\n    ratingCount: $ratingCount\n  ) {\n    success\n    message\n  }\n}",
+                "variables": "{\n  \"productId\": 1,\n  \"title\": \"MacBook Pro M3 (Updated)\",\n  \"price\": 2299.99,\n  \"description\": \"UPDATED: Latest M3 Pro chip with enhanced performance\",\n  \"category\": \"Premium Laptops\",\n  \"ratingRate\": 4.9,\n  \"ratingCount\": 450\n}"
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["graphql"]
+            },
+            "description": "Update product asynchronously - returns immediately without waiting"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mutations - Sync",
+      "item": [
+        {
+          "name": "Create Product - Sync (Returns ID)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation CreateProductSync($title: String!, $price: Float!, $description: String, $category: String, $image: String, $ratingRate: Float, $ratingCount: Int) {\n  createProductSync(\n    title: $title\n    price: $price\n    description: $description\n    category: $category\n    image: $image\n    ratingRate: $ratingRate\n    ratingCount: $ratingCount\n  ) {\n    product {\n      id\n      title\n      price\n      description\n      category\n      image\n      rating\n    }\n  }\n}",
+                "variables": "{\n  \"title\": \"Sony WH-1000XM5\",\n  \"price\": 379.99,\n  \"description\": \"Industry-leading noise cancellation with Auto NC Optimizer, 30-hour battery life, ultra-comfortable lightweight design with soft fit leather\",\n  \"category\": \"Audio\",\n  \"image\": \"https://m.media-amazon.com/images/I/61vJtKbAssL._AC_SL1500_.jpg\",\n  \"ratingRate\": 4.6,\n  \"ratingCount\": 1847\n}"
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["graphql"]
+            },
+            "description": "Create product synchronously - waits for DB write and returns product with ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sample Products",
+      "item": [
+        {
+          "name": "Create Gaming Mouse",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation {\n  createProduct(\n    title: \"Razer DeathAdder V3 Gaming Mouse\"\n    price: 149.99\n    description: \"Ultra-lightweight ergonomic esports mouse with 30K DPI sensor, 90-hour battery life, and 8K Hz polling rate\"\n    category: \"Gaming Peripherals\"\n    image: \"https://assets.razerzone.com/eeimages/support/products/1939/1939-deathadder-v3.png\"\n    ratingRate: 4.7\n    ratingCount: 523\n  ) {\n    success\n    message\n  }\n}",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["graphql"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Gaming Keyboard",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation {\n  createProduct(\n    title: \"Corsair K70 RGB Gaming Keyboard\"\n    price: 169.99\n    description: \"Mechanical gaming keyboard with Cherry MX switches, per-key RGB backlighting, and aircraft-grade aluminum frame\"\n    category: \"Gaming Peripherals\"\n    image: \"https://www.corsair.com/medias/sys_master/images/images/h97/h89/9112096522270/-CH-9109010-NA-Gallery-K70-RGB-MK2-01.png\"\n    ratingRate: 4.5\n    ratingCount: 892\n  ) {\n    success\n    message\n  }\n}",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["graphql"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Office Chair",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation {\n  createProductSync(\n    title: \"Herman Miller Aeron Office Chair\"\n    price: 1795.00\n    description: \"Ergonomic office chair with PostureFit SL back support, fully adjustable arms, and 12-year warranty\"\n    category: \"Office Furniture\"\n    image: \"https://www.hermanmiller.com/content/dam/hmicom/page_assets/products/aeron_chair/mh_prd_ovw_aeron_chair.jpg\"\n    ratingRate: 4.8\n    ratingCount: 3421\n  ) {\n    product {\n      id\n      title\n      price\n    }\n  }\n}",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["graphql"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create iPhone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation {\n  createProductSync(\n    title: \"iPhone 15 Pro Max\"\n    price: 1199.99\n    description: \"6.7-inch Super Retina XDR display, A17 Pro chip, titanium design, 5x telephoto zoom\"\n    category: \"Smartphones\"\n    image: \"https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-max-blue-titanium-select\"\n    ratingRate: 4.7\n    ratingCount: 2134\n  ) {\n    product {\n      id\n      title\n      price\n      category\n    }\n  }\n}",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["graphql"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Basic test to check if response is successful",
+          "pm.test(\"Status code is 200\", function () {",
+          "    pm.response.to.have.status(200);",
+          "});",
+          "",
+          "// Check if response has data",
+          "pm.test(\"Response has data field\", function () {",
+          "    var jsonData = pm.response.json();",
+          "    pm.expect(jsonData).to.have.property('data');",
+          "});",
+          "",
+          "// Check for GraphQL errors",
+          "pm.test(\"No GraphQL errors\", function () {",
+          "    var jsonData = pm.response.json();",
+          "    pm.expect(jsonData).to.not.have.property('errors');",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
+  ]
+}
