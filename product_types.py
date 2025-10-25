@@ -1,6 +1,5 @@
 """
 Type definitions for the product API
-Shows understanding of type checking in Python
 """
 
 from typing import TypedDict, Optional, Dict, Any, List
