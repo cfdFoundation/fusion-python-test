@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Main web application
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_DEBUG=1
+      - DATABASE_URL=sqlite:////app/data/products.db
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./:/app
+      - product_data:/app/data
+    command: python app.py
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Integration tests (run with: docker-compose run test)
+  test:
+    build: .
+    environment:
+      - DOCKER_ENV=1
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./:/app
+    networks:
+      - app-network
+    depends_on:
+      web:
+        condition: service_healthy
+    command: python integration_test.py
+    profiles:
+      - testing
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  product_data:
